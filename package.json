@@ -13,7 +13,7 @@
     "verify-binance": "truffle run verify LotteryNFT@{contract-address} --network binance",
     "compile": "truffle compile",
     "test:contracts": "jest --runInBand --detectOpenHandles ./tests --coverage",
-    "test": "hardhat coverage"
+    "test": "hardhat test"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.1",
