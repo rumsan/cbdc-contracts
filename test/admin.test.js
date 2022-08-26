@@ -13,7 +13,7 @@ describe("Admin contract", function() {
   let managerRole;
 
   before(async function() {
-    [deployer,admin,server,vendor,manager,mobilizer,addr1,addr2] = await web3.eth.getAccounts();
+    [deployer,server,vendor,manager,mobilizer,addr1,addr2] = await web3.eth.getAccounts();
     rahatERC20 = await RahatERC20.new("Rahat","RHT",deployer);
     rahat = await Rahat.new(rahatERC20.address,deployer)
     admin = await RahatAdmin.new(rahatERC20.address,rahat.address,10000000,deployer)

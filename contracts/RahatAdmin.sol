@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.7;
 
-import "./ERC20_CBDC.sol";
-import "./Regulator.sol";
+import "./RahatERC20.sol";
+import "./Rahat.sol";
 
 /// @title Regulator Admin contract - owns all the tokens initially minted
 /// @author Rumsan Associates
@@ -37,6 +37,7 @@ contract Admin {
 
   /// @notice assign budgets to project
   mapping(bytes32 => uint256) public projectERC20Capital;
+  uint256 public totalAllocatedToken;
 
   modifier OnlyOwner() {
     require(
@@ -63,12 +64,13 @@ contract Admin {
   constructor(
     RahatERC20 _erc20,
     Regulator _regulatorContract,
-    uint256 _intitialSupply,
+    uint256 _initialSupply,
     address _admin
   ) {
     erc20 = _erc20;
     regulatorContract = _regulatorContract;
-    erc20.mintERC20(address(this), _intitialSupply);
+    erc20.mintERC20(address(this), _initialSupply);
+    totalAllocatedToken += _initialSupply;
     //(bool success, bytes memory result) = address(_tokenContract).call(abi.encodeWithSignature("mintERC20(address, uint256)", address(this), _intitialSupply));
     //mintSuccess = success;
     //mintData = abi.decode(result,(uint256));

@@ -6,7 +6,7 @@
 //TODO revole roles
 
 pragma solidity 0.8.7;
-import "./ERC20_CBDC.sol";
+import "./RahatERC20.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/Multicall.sol";
@@ -246,10 +246,19 @@ contract Regulator is AccessControl, Multicall {
     disbursement memory _disbursement = projectDisbursements[findHash(
       _projectId
     )];
+    uint256 _retrievalCycle;
     if (_disbursement.startDate > block.timestamp) return 0;
     if (_disbursement.disbursementFrequency == 0) return 0;
-    uint256 _retrievalCycle = (block.timestamp - _disbursement.startDate) /
-      _disbursement.disbursementFrequency;
+    if (block.timestamp > _disbursement.endDate) {
+      _retrievalCycle =
+        (_disbursement.endDate - _disbursement.startDate) /
+        _disbursement.disbursementFrequency;
+    } else {
+      _retrievalCycle =
+        (block.timestamp - _disbursement.startDate) /
+        _disbursement.disbursementFrequency;
+    }
+
     uint256 _retrievedBalance = retrievedBalance[_phone];
     uint256 _estimatedBlance = _disbursement.disbursementAmount *
       _retrievalCycle;
@@ -407,10 +416,12 @@ contract Regulator is AccessControl, Multicall {
       "RAHAT: OTP did not match."
     );
     uint256 amt = ac.amount;
+    retrievedBalance[_phone] += amt;
     ac.isReleased = false;
     ac.amount = 0;
     ac.date = 0;
     erc20.transfer(msg.sender, amt);
+
     emit ClaimAcquiredERC20(msg.sender, _phone, amt);
   }
 
